@@ -1,10 +1,10 @@
 // src/components/Services/constants.ts
-import motorcycleImg from '../../shared/assets/Services/motocikl-foto-mini.webp'
-import carImg from '../../shared/assets/Services/legkovoy-avtomobil-foto-mini.webp'
-import suvImg from '../../shared/assets/Services/vnedorozhnik-foto-mini.webp'
-import minibusImg from '../../shared/assets/Services/mikroavtobus-foto-mini.webp'
-import specialImg from '../../shared/assets/Services/spectehnika-foto-mini.webp'
-import gazelImg from '../../shared/assets/Services/gazel-foto-mini.webp'
+import prokolImg from '../../shared/assets/Services/remont_prokola_kolesa.webp'
+import zamenaImg from '../../shared/assets/Services/shinomontaj-4.jpg'
+import balansImg from '../../shared/assets/Services/balansirovka.jpg'
+import viezdImg from '../../shared/assets/Services/large_e68a611s-1920.jpg'
+import pravkaImg from '../../shared/assets/Services/DSC_3411.jpg'
+import hranenieImg from '../../shared/assets/Services/images.jpeg'
 
 import type { ServiceItem } from './types'
 
@@ -12,31 +12,31 @@ export const SERVICES_DATA: ServiceItem[] = [
   {
     id: 'tyre-change',
     title: 'СЕЗОННАЯ ЗАМЕНА ШИН',
-    image: carImg
+    image: zamenaImg
   },
   {
     id: 'puncture',
     title: 'РЕМОНТ ПРОКОЛОВ',
-    image: motorcycleImg
+    image: prokolImg
   },
   {
     id: 'balance',
     title: 'БАЛАНСИРОВКА КОЛЕС',
-    image: suvImg
+    image: balansImg
   },
   {
     id: 'disk-repair',
     title: 'ПРАВКА И РЕМОНТ ДИСКОВ',
-    image: specialImg
+    image: pravkaImg
   },
   {
     id: 'storage',
     title: 'ХРАНЕНИЕ КОМПЛЕКТОВ',
-    image: gazelImg
+    image: hranenieImg
   },
   {
     id: 'mobile',
     title: 'ВЫЕЗДНОЙ ШИНОМОНТАЖ',
-    image: minibusImg
+    image: viezdImg
   }
 ]
