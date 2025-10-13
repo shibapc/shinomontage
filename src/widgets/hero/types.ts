@@ -13,10 +13,3 @@ export interface ButtonLabels {
   PRICES: string
 }
 
-export interface UseHeroSliderReturn {
-  currentSlide: number
-  slides: HeroSlide[]
-  nextSlide: () => void
-  prevSlide: () => void
-  goToSlide: (index: number) => void
-}

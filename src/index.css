@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 * {
-  font-family: "Source Serif 4", serif;
-  font-weight: 300;
+  font-family: "Roboto Flex";
+  font-weight: 400;
+}
+
+.Montserrat {
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 700 !important;
 }
 
 /* Анимации для Hero слайдера */

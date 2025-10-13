@@ -1,97 +1,118 @@
-import { useHeroSlider } from './useHeroSlider.ts'
-import { BUTTON_LABELS } from './constants.ts'
+// src/components/Hero/Hero.tsx
+import React, { useEffect, useState } from "react";
+import { HERO_SLIDES, BUTTON_LABELS } from "./constants";
+import type { HeroSlide } from "./types";
 
-function Hero(): React.JSX.Element {
-  const { currentSlide, slides, goToSlide } = useHeroSlider()
+const AUTO_PLAY_MS = 7000;
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      const headerHeight = window.innerWidth >= 768 ? 80 : 64
-      const elementPosition = element.offsetTop - headerHeight + 40
-      window.scrollTo({
-        top: elementPosition,
-        behavior: 'smooth'
-      })
-    }
-  }
+const Hero: React.FC = () => {
+  const [current, setCurrent] = useState(0);
+  const slides: HeroSlide[] = HERO_SLIDES;
+
+  const next = () => setCurrent((i) => (i + 1) % slides.length);
+  const prev = () => setCurrent((i) => (i - 1 + slides.length) % slides.length);
+  const goTo = (idx: number) => setCurrent(idx);
+
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const t = setInterval(next, AUTO_PLAY_MS);
+    return () => clearInterval(t);
+  }, [slides.length]);
+
+  const active = slides[current];
 
   return (
-    <section id="home" className="relative bg-gray-900 overflow-hidden h-screen w-full min-h-screen">
-      {/* Фоновые изображения всех слайдов */}
-      {slides.map((slide, index) => (
-        <div
-          key={slide.id}
-          className={`absolute inset-0 transition-all duration-1500 ease-in-out ${
-            index === currentSlide 
-              ? 'opacity-100 scale-100' 
-              : 'opacity-0 scale-105'
-          }`}
-        >
-          <img 
-            src={slide.image} 
-            alt={slide.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/75"></div>
-        </div>
-      ))}
-
-      {/* Контент поверх изображения */}
-      <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="text-center text-white px-6 md:px-12 max-w-4xl hero-content">
-          {/* Контейнер с фиксированной высотой для текста */}
-          <div className="min-h-[280px] md:min-h-[320px] flex flex-col justify-center">
-            <div
-              key={currentSlide}
-              className="animate-fade-in-up"
-            >
-              <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 leading-tight tracking-tight animate-fade-in-up text-white min-h-[1.2em] flex items-center justify-center">
-                {slides[currentSlide].title}
-              </h1>
-              <h2 className="text-lg md:text-3xl text-red-400 font-medium mb-4 md:mb-6 opacity-95 animate-fade-in-up min-h-[1.2em] flex items-center justify-center">
-                {slides[currentSlide].subtitle}
-              </h2>
-              <p className="text-base md:text-xl text-gray-100 mb-8 md:mb-10 leading-relaxed max-w-2xl mx-auto opacity-90 animate-fade-in-up min-h-[3em] flex items-center justify-center">
-                {slides[currentSlide].description}
-              </p>
-            </div>
-          </div>
-          
-          {/* Кнопки в отдельном контейнере с фиксированным позиционированием */}
-          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center animate-fade-in-up mt-8">
-            <button 
-              onClick={() => scrollToSection('order')}
-              className="bg-red-400 hover:bg-red-500 text-white font-bold py-3 md:py-4 px-6 md:px-8 rounded-full transition-all duration-200 text-base md:text-lg focus:outline-none min-w-[200px] md:min-w-[220px]"
-            >
-              {BUTTON_LABELS.ORDER}
-            </button>
-            <button 
-              onClick={() => scrollToSection('general-pricing')}
-              className="bg-white/10 hover:bg-white/20 text-white font-bold py-3 md:py-4 px-6 md:px-8 rounded-full transition-all duration-200 text-base md:text-lg focus:outline-none border border-white/30 min-w-[200px] md:min-w-[220px]"
-            >
-              {BUTTON_LABELS.PRICES}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Индикаторы слайдов */}
-      <div className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 flex space-x-3 md:space-x-4 z-30">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ease-in-out transform ${
-              index === currentSlide 
-                ? 'bg-red-500 scale-125' 
-                : 'bg-white/50 hover:bg-white/70 hover:scale-110'
-            }`}
+    <section className="relative h-[88svh] md:h-[92svh] overflow-hidden">
+      {/* BG crossfade layers */}
+      <div className="absolute inset-0">
+        {slides.map((s, idx) => (
+          <div
+            key={s.id}
+            className={`absolute inset-0 bg-center bg-cover transition-opacity duration-700 ${idx === current ? "opacity-100" : "opacity-0"}`}
+            style={{ backgroundImage: `url(${s.image})` }}
+            aria-hidden={idx !== current}
           />
         ))}
+        <div className="absolute inset-0 bg-black/50" />
       </div>
-    </section>
-  )
-}
 
-export default Hero
+      {/* Content */}
+      {/* Контент */}
+<div className="relative z-10 h-full flex items-center">
+  <div className="w-full">
+    <div className="max-w-[1280px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 text-white hero-content">
+      <h1 className="Montserrat text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight animate-fade-in-up">
+        {active.title}
+      </h1>
+
+      {active.subtitle && (
+        <p className="mt-4 text-base sm:text-lg md:text-xl font-light animate-fade-in-up animation-delay-100">
+          {active.subtitle}
+        </p>
+      )}
+
+      {active.description && (
+        <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg/7 max-w-[60ch] animate-fade-in-up animation-delay-200">
+          {active.description}
+        </p>
+      )}
+
+      <div className="mt-8 flex flex-wrap gap-3 animate-fade-in-up animation-delay-300">
+        <a
+          href="#order"
+          className="inline-flex items-center justify-center rounded-xl bg-neutral-600/90 hover:bg-neutral-600 active:bg-neutral-700 px-5 py-3 text-sm sm:text-base font-medium shadow-md transition"
+        >
+          {BUTTON_LABELS.ORDER}
+        </a>
+        <a
+          href="#prices"
+          className="inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/25 ring-1 ring-white/30 px-5 py-3 text-sm sm:text-base font-medium transition"
+        >
+          {BUTTON_LABELS.PRICES}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      {/* Controls */}
+      {slides.length > 1 && (
+        <>
+          {/* arrows */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3 sm:px-4">
+            <button
+              onClick={prev}
+              className="pointer-events-auto grid h-10 w-10 place-items-center rounded-full bg-black/30 hover:bg-black/45 active:scale-95 text-white focus:outline-none focus:ring-2 focus:ring-white/60 transition"
+              aria-label="Previous slide"
+            >
+              ‹
+            </button>
+            <button
+              onClick={next}
+              className="pointer-events-auto grid h-10 w-10 place-items-center rounded-full bg-black/30 hover:bg-black/45 active:scale-95 text-white focus:outline-none focus:ring-2 focus:ring-white/60 transition"
+              aria-label="Next slide"
+            >
+              ›
+            </button>
+          </div>
+
+          {/* dots */}
+          <div className="absolute bottom-5 left-6 sm:left-10 lg:left-16 flex gap-2">
+            {slides.map((s, idx) => (
+              <button
+                key={s.id}
+                onClick={() => goTo(idx)}
+                className={`h-2.5 w-2.5 rounded-full transition ${idx === current ? "bg-white" : "bg-white/40 hover:bg-white/70"}`}
+                aria-label={`Go to slide ${idx + 1}`}
+                aria-current={idx === current}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </section>
+  );
+};
+
+export default Hero;
