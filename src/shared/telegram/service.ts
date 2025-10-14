@@ -1,6 +1,12 @@
 import { TELEGRAM_CONFIG, getTelegramApiUrl, isTelegramConfigured } from './config.ts'
-import type { OrderFormData } from '../../widgets/order-form/types.ts'
-import { VEHICLE_TYPES } from '../../widgets/order-form/constants.ts'
+
+export interface OrderFormData {
+  name?: string
+  phone?: string
+  vehicleType?: string
+  location?: string
+  description?: string
+}
 
 // Интерфейс для ответа от Telegram API
 interface TelegramResponse {
@@ -13,9 +19,18 @@ interface TelegramResponse {
 // Сервис для работы с Telegram API
 export class TelegramService {
   // Получение человекочитаемого названия типа транспорта
-  private static getVehicleTypeName(vehicleTypeId: string): string {
-    const vehicle = VEHICLE_TYPES.find(v => v.id === vehicleTypeId)
-    return vehicle ? vehicle.name : vehicleTypeId
+  private static getVehicleTypeName(vehicleTypeId: string | undefined): string {
+    if (!vehicleTypeId) {
+      return 'Не указан'
+    }
+
+    const vehicleDictionary: Record<string, string> = {
+      light: 'Легковой автомобиль',
+      suv: 'Кроссовер / джип / минивэн',
+      commercial: 'Коммерческий транспорт'
+    }
+
+    return vehicleDictionary[vehicleTypeId] ?? vehicleTypeId
   }
 
   // Отправка заказа в Telegram
@@ -29,11 +44,16 @@ export class TelegramService {
       // Получаем человекочитаемое название типа транспорта
       const vehicleTypeName = this.getVehicleTypeName(orderData.vehicleType)
 
+      const preparedOrder = {
+        name: orderData.name ?? 'Не указано',
+        phone: orderData.phone ?? 'Не указан',
+        vehicleType: vehicleTypeName,
+        location: orderData.location ?? 'Не указано',
+        description: orderData.description
+      }
+
       // Формируем сообщение с правильным названием транспорта
-      const message = TELEGRAM_CONFIG.MESSAGE_TEMPLATE({
-        ...orderData,
-        vehicleType: vehicleTypeName
-      })
+      const message = TELEGRAM_CONFIG.MESSAGE_TEMPLATE(preparedOrder)
       
       // Проверяем длину сообщения (Telegram ограничивает до 4096 символов)
       if (message.length > 4000) {
